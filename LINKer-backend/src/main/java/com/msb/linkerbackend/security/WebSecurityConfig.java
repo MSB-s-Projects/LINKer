@@ -1,6 +1,7 @@
 package com.msb.linkerbackend.security;
 
 import com.msb.linkerbackend.security.jwt.JwtAuthenticationFilter;
+import com.msb.linkerbackend.security.jwt.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @AllArgsConstructor
 public class WebSecurityConfig {
     private UserDetailsService userDetailsService;
+    private JwtUtils jwtUtils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -41,7 +43,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+        return new JwtAuthenticationFilter(jwtUtils, userDetailsService);
     }
 
     @Bean
