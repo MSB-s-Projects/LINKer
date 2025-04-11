@@ -8,6 +8,7 @@ import com.msb.linkerbackend.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,6 +72,14 @@ public class AuthController {
                     .error(e.getMessage())
                     .build();
             return ResponseEntity.badRequest().body(response);
+        } catch (BadCredentialsException e) {
+            log.error("Invalid credentials: {}", e.getMessage());
+
+            ErrorResponse response = ErrorResponse.builder()
+                    .message("Invalid Credentials")
+                    .error(e.getMessage())
+                    .build();
+            return ResponseEntity.status(401).body(response);
         } catch (Exception e) {
             log.error("An error occurred while logging in user({}): {}", loginRequest, e.getMessage());
 
