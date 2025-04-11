@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -14,13 +13,13 @@ import java.util.Map;
 public class HealthController {
     @GetMapping
     public ResponseEntity<Map<String, String>> healthCheck() {
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "UP");
-        response.put("message", "Service is running");
-        response.put("version", "1.0.0");
-        response.put("timestamp", new Date().toString());
-        response.put("service", "linker-backend");
-        response.put("author", "MSB");
+        Map<String, String> response = Map.of(
+                "status", "UP",
+                "message", "Service is running",
+                "version", "1.0.0",
+                "timestamp", new Date().toString(),
+                "service", "linker-backend",
+                "author", "MSB");
         return ResponseEntity.ok(response);
     }
 }
