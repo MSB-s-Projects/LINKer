@@ -1,10 +1,17 @@
 package com.msb.linkerbackend.services;
 
+import com.msb.linkerbackend.dtos.LoginRequest;
 import com.msb.linkerbackend.dtos.RegisterRequest;
 import com.msb.linkerbackend.models.User;
 import com.msb.linkerbackend.repositories.UserRepository;
+import com.msb.linkerbackend.security.jwt.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +22,8 @@ import java.util.Optional;
 public class UserService {
     private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
+    private AuthenticationManager authenticationManager;
+    private JwtUtils jwtUtils;
 
     public Optional<User> registerNewUser(@NotNull RegisterRequest registerRequest) throws IllegalArgumentException {
         // Validate and clean the input
@@ -41,5 +50,16 @@ public class UserService {
 
         // Return the newly created user
         return Optional.of(newUser);
+    }
+
+    public Optional<String> loginUser(LoginRequest loginRequest) {
+        loginRequest.validateAndClean();
+
+        Authentication authentication =
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername()
+                        , loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return Optional.ofNullable(jwtUtils.generateToken(userDetails));
     }
 }
