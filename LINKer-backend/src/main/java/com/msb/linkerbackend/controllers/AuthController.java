@@ -35,7 +35,7 @@ public class AuthController {
             );
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
+            log.error("User creation failed: {}", e.getMessage());
 
             ErrorResponse response = ErrorResponse.builder()
                     .message("User Creation Failed")
@@ -43,11 +43,12 @@ public class AuthController {
                     .build();
             return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
-            log.error("An error occurred while registering user({}): {}", registerRequest, e.getMessage());
+            log.error("An error({}) occurred while registering user({}): {}", e.getClass().getSimpleName(),
+                    registerRequest, e.getMessage());
 
             ErrorResponse response = ErrorResponse.builder()
                     .message("An error occurred")
-                    .error(e.getMessage())
+                    .message("An error occurred :" + e.getClass().getSimpleName())
                     .build();
             return ResponseEntity.internalServerError().body(response);
         }
@@ -65,7 +66,7 @@ public class AuthController {
             );
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
+            log.error("Login failed: {}", e.getMessage());
 
             ErrorResponse response = ErrorResponse.builder()
                     .message("Login Failed")
@@ -81,10 +82,11 @@ public class AuthController {
                     .build();
             return ResponseEntity.status(401).body(response);
         } catch (Exception e) {
-            log.error("An error occurred while logging in user({}): {}", loginRequest, e.getMessage());
+            log.error("An error({}) occurred while logging in user({}): {}", e.getClass().getSimpleName(),
+                    loginRequest, e.getMessage());
 
             ErrorResponse response = ErrorResponse.builder()
-                    .message("An error occurred")
+                    .message("An error occurred :" + e.getClass().getSimpleName())
                     .error(e.getMessage())
                     .build();
             return ResponseEntity.internalServerError().body(response);
