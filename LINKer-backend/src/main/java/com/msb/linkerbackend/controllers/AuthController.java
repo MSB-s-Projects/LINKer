@@ -1,6 +1,5 @@
 package com.msb.linkerbackend.controllers;
 
-import com.msb.linkerbackend.dtos.ErrorResponse;
 import com.msb.linkerbackend.dtos.LoginRequest;
 import com.msb.linkerbackend.dtos.RegisterRequest;
 import com.msb.linkerbackend.models.User;
@@ -24,61 +23,25 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody RegisterRequest registerRequest) {
-        try {
-            User user = userService.registerNewUser(registerRequest).orElseThrow(IllegalArgumentException::new);
-            log.info("User created successfully: {}", user);
+        User user = userService.registerNewUser(registerRequest).orElseThrow(IllegalArgumentException::new);
+        log.info("User created successfully: {}", user);
 
-            Map<String, Object> response = Map.of(
-                    "message", "User Created Successfully",
-                    "user", user
-            );
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
-
-            ErrorResponse response = ErrorResponse.builder()
-                    .message("User Creation Failed")
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            log.error("An error occurred while registering user({}): {}", registerRequest, e.getMessage());
-
-            ErrorResponse response = ErrorResponse.builder()
-                    .message("An error occurred")
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(response);
-        }
+        Map<String, Object> response = Map.of(
+                "message", "User Created Successfully",
+                "user", user
+        );
+        return ResponseEntity.ok(response);
     }
 
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            String jwt = userService.loginUser(loginRequest).orElseThrow(IllegalArgumentException::new);
+        String jwt = userService.loginUser(loginRequest).orElseThrow(IllegalArgumentException::new);
 
-            Map<String, Object> response = Map.of(
-                    "message", "Login Successful",
-                    "token", jwt
-            );
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
-
-            ErrorResponse response = ErrorResponse.builder()
-                    .message("Login Failed")
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            log.error("An error occurred while logging in user({}): {}", loginRequest, e.getMessage());
-
-            ErrorResponse response = ErrorResponse.builder()
-                    .message("An error occurred")
-                    .error(e.getMessage())
-                    .build();
-            return ResponseEntity.internalServerError().body(response);
-        }
+        Map<String, Object> response = Map.of(
+                "message", "Login Successful",
+                "token", jwt
+        );
+        return ResponseEntity.ok(response);
     }
 }
