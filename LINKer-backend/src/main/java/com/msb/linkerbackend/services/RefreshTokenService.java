@@ -65,7 +65,7 @@ public class RefreshTokenService {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setSecure(environment.equals("prod")); // Set to true in production
-        cookie.setPath("/api/auth/refresh");
+        cookie.setPath("/api/auth/");
         cookie.setMaxAge(7 * 24 * 60 * 60);
         return cookie;
     }
