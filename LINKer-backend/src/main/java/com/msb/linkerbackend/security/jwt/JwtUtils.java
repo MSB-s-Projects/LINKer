@@ -1,6 +1,5 @@
 package com.msb.linkerbackend.security.jwt;
 
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -29,6 +28,34 @@ public class JwtUtils {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
+    public String generateAccessToken(@NotNull UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        String roles = userDetails.getAuthorities().toString();
+        return createToken(username, roles, jwtExpiration);
+    }
+
+    private String createToken(String username, String roles, Long expiration) {
+        return Jwts.builder()
+                .subject(username)
+                .claim("roles", roles)
+                .issuedAt(new Date())
+                .expiration(new Date(new Date().getTime() + expiration))
+                .signWith(getSignKey())
+                .compact();
+    }
+
+    public String getUsernameFromJWT(String jwt) {
+        return Jwts.parser()
+                .verifyWith(getSignKey())
+                .build().parseSignedClaims(jwt)
+                .getPayload()
+                .getSubject();
+    }
+
+    public boolean validate(String jwt, @NotNull UserDetails userDetails) {
+        return getUsernameFromJWT(jwt).equals(userDetails.getUsername());
+    }
+
     public String getJwtFromRequest(@NotNull HttpServletRequest request) {
         String jwt = request.getHeader("Authorization");
         if (jwt != null && jwt.startsWith("Bearer ")) {
@@ -37,38 +64,4 @@ public class JwtUtils {
         return null;
     }
 
-    public boolean validate(String jwt) {
-        try {
-            Jwts.parser()
-                    .verifyWith(getSignKey())
-                    .build()
-                    .parseSignedClaims(jwt);
-            return true;
-        } catch (JwtException e) {
-            log.error("Invalid JWT: {}", e.getMessage());
-            return false;
-        } catch (IllegalArgumentException e) {
-            log.error("JWT is empty: {}", e.getMessage());
-            return false;
-        } catch (Exception e) {
-            log.error("JWT is invalid: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    public String getUsernameFromJWT(String jwt) {
-        return Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(jwt).getPayload().getSubject();
-    }
-
-    public String generateToken(UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        String roles = userDetails.getAuthorities().toString();
-        return Jwts.builder()
-                .subject(username)
-                .claim("roles", roles)
-                .issuedAt(new Date())
-                .expiration(new Date(new Date().getTime() + jwtExpiration))
-                .signWith(getSignKey())
-                .compact();
-    }
 }

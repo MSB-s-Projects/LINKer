@@ -52,7 +52,7 @@ public class UserService {
         return Optional.of(newUser);
     }
 
-    public Optional<String> loginUser(LoginRequest loginRequest) {
+    public Optional<String> loginUser(@NotNull LoginRequest loginRequest) {
         loginRequest.validateAndClean();
 
         Authentication authentication =
@@ -60,6 +60,6 @@ public class UserService {
                         , loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return Optional.ofNullable(jwtUtils.generateToken(userDetails));
+        return Optional.ofNullable(jwtUtils.generateAccessToken(userDetails));
     }
 }
