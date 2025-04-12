@@ -39,19 +39,19 @@ public class JwtUtils {
 
     public boolean validate(String jwt) {
         try {
-            Jwts.parser().verifyWith(getSignKey()).build().parseSignedClaims(jwt);
+            Jwts.parser()
+                    .verifyWith(getSignKey())
+                    .build()
+                    .parseSignedClaims(jwt);
             return true;
         } catch (JwtException e) {
-            log.error(e.getMessage());
-            // Token is invalid
+            log.error("Invalid JWT: {}", e.getMessage());
             return false;
         } catch (IllegalArgumentException e) {
-            log.error(e.getMessage());
-            // Token is empty or null
+            log.error("JWT is empty: {}", e.getMessage());
             return false;
         } catch (Exception e) {
-            log.error(e.getMessage());
-            // Other exceptions
+            log.error("JWT is invalid: {}", e.getMessage());
             return false;
         }
     }
@@ -67,7 +67,7 @@ public class JwtUtils {
                 .subject(username)
                 .claim("roles", roles)
                 .issuedAt(new Date())
-                .expiration(new Date(new Date().getTime()+ jwtExpiration))
+                .expiration(new Date(new Date().getTime() + jwtExpiration))
                 .signWith(getSignKey())
                 .compact();
     }

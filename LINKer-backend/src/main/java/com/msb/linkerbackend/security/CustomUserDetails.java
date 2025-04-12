@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class UserDetailsI extends User implements UserDetails {
+public class CustomUserDetails extends User implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -24,7 +24,7 @@ public class UserDetailsI extends User implements UserDetails {
     private String password;
     private List<GrantedAuthority> authorities = new ArrayList<>();
 
-    public UserDetailsI(@NotNull User user) {
+    public CustomUserDetails(@NotNull User user) {
         GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
         this.authorities.add(authority);
         this.username = user.getUsername();

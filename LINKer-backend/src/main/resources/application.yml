@@ -6,12 +6,12 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASS}
   jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
+    open-in-view: false
+  devtools:
+    add-properties: true
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
