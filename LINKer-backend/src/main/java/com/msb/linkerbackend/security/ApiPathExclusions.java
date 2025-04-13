@@ -9,6 +9,8 @@ public enum ApiPathExclusions {
     HEALTH("/api/health/**"),
     DOCS("/api/docs/**"),
     AUTH("/api/auth/**"),
+    OAUTH("/api/oauth/**"),
+    LOGIN("/login/**"),
     SHORT_URL("/{shortUrl}");
 
     private final String path;

@@ -2,7 +2,10 @@ package com.msb.linkerbackend.configurations;
 
 import com.msb.linkerbackend.security.ApiPathExclusions;
 import com.msb.linkerbackend.security.jwt.JwtAuthenticationFilter;
-import lombok.AllArgsConstructor;
+import com.msb.linkerbackend.security.oauth.CustomOAuth2SuccessHandler;
+import com.msb.linkerbackend.security.oauth.GithubOAuth2UserService;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,10 +27,12 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WebSecurityConfig {
-    private UserDetailsService userDetailsService;
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
+    private final GithubOAuth2UserService githubOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,6 +50,18 @@ public class WebSecurityConfig {
                                 .toArray(String[]::new)).permitAll()
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .authenticationEntryPoint(
+                                        (request, response, authException) ->
+                                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(githubOAuth2UserService)
+                        )
+                        .loginPage("/oauth2/authorization/github")
+                        .successHandler(customOAuth2SuccessHandler))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
