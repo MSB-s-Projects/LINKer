@@ -3,6 +3,7 @@ package com.msb.linkerbackend.services;
 import com.msb.linkerbackend.dtos.JwtTokens;
 import com.msb.linkerbackend.models.RefreshToken;
 import com.msb.linkerbackend.repositories.RefreshTokenRepository;
+import com.msb.linkerbackend.repositories.UserRepository;
 import com.msb.linkerbackend.security.jwt.JwtUtils;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Value("${spring.profiles.active}")
     private String environment;
@@ -33,7 +34,7 @@ public class RefreshTokenService {
     public RefreshToken createRefreshToken(String username) throws UsernameNotFoundException {
         refreshTokenRepository.findByUser_Username(username).ifPresent(this::deleteToken);
         RefreshToken refreshToken = RefreshToken.builder()
-                .user(userService.findByUsername(username).orElseThrow(() ->
+                .user(userRepository.findByUsername(username).orElseThrow(() ->
                         new UsernameNotFoundException("User not found")))
                 .token(UUID.randomUUID().toString())
                 .expiresAt(Instant.now().plusMillis(refreshTokenExpiration))

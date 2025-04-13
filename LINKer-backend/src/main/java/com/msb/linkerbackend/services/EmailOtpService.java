@@ -42,7 +42,7 @@ public class EmailOtpService {
         // 3. Send the OTP to the user's email
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
-        message.setSubject("Your OTP Code");
+        message.setSubject("LINKer: Your OTP Code");
         message.setText("Your OTP code is: " + emailOtp.getCode());
         mailSender.send(message);
     }
