@@ -60,12 +60,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
         try {
-            loginRequest.validateAndClean();
+            userService.loginUser(loginRequest).orElseThrow(() ->
+                    new BadCredentialsException("Invalid credentials"));
             emailOtpService.generateAndSendOtp(loginRequest.getUsername());
             Map<String, Object> res = Map.of(MESSAGE, "OTP sent to your email. Please verify your email");
             return ResponseEntity.ok(res);
         } catch (UsernameNotFoundException | BadCredentialsException | IllegalArgumentException e) {
-            log.error("Username Not Found: {}", e.getMessage());
+            log.error("User Login Failed: {}", e.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse("Username not found", e));
         } catch (Exception e) {
             log.error("An error({}) occurred while logging in user({}): {}", e.getClass().getSimpleName(),
@@ -110,7 +111,7 @@ public class AuthController {
     public ResponseEntity<Object> refreshToken(@CookieValue("refreshToken") String refreshToken,
                                                HttpServletResponse response) {
         try {
-            JwtTokens jwtTokens = refreshTokenService.getJwtTokens(refreshToken);
+            JwtTokens jwtTokens = refreshTokenService.refreshJwtTokens(refreshToken);
 
             // Reset the cookie with the new refresh token
             response.addCookie(refreshTokenService.getRefreshCookie(jwtTokens.refreshToken()));

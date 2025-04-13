@@ -72,7 +72,7 @@ public class RefreshTokenService {
         return cookie;
     }
 
-    public JwtTokens getJwtTokens(String refreshToken) throws BadCredentialsException, UsernameNotFoundException {
+    public JwtTokens refreshJwtTokens(String refreshToken) throws BadCredentialsException, UsernameNotFoundException {
         RefreshToken token = findByToken(refreshToken);
         token = verifyExpiration(token);
         deleteToken(token);

@@ -30,7 +30,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     private final UserDetailsService userDetailsService;
     private final JwtUtils jwtUtils;
     private final RefreshTokenService refreshTokenService;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
 
 
     @Override
