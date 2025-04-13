@@ -5,6 +5,7 @@ import com.msb.linkerbackend.dtos.RegisterRequest;
 import com.msb.linkerbackend.models.User;
 import com.msb.linkerbackend.repositories.UserRepository;
 import com.msb.linkerbackend.security.jwt.JwtUtils;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,7 @@ public class UserService {
     private AuthenticationManager authenticationManager;
     private JwtUtils jwtUtils;
 
+    @Transactional
     public Optional<User> registerNewUser(@NotNull RegisterRequest registerRequest) throws IllegalArgumentException {
         // Validate and clean the input
         registerRequest.validateAndClean();
@@ -61,5 +63,14 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return Optional.ofNullable(jwtUtils.generateAccessToken(userDetails));
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public void setEmailVerified(@NotNull User user) {
+        user.setEmailVerified(true);
+        userRepository.save(user);
     }
 }

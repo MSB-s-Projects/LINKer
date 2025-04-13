@@ -20,6 +20,7 @@ public class User {
     @JsonIgnore
     private String password;
     private String email;
+    boolean isEmailVerified = false;
     private String role = "USER";
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

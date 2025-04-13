@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,27 +34,22 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, @NotNull HttpServletResponse response,
+                                        @NotNull Authentication authentication) throws IOException,
+            BadCredentialsException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
         String githubUsername = oAuth2User.getAttribute("login");
         String email = oAuth2User.getAttribute("email");
 
 
-        User user = userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = new User();
-            newUser.setUsername(githubUsername);
-            newUser.setEmail(email);
-            newUser.setPassword(passwordEncoder.encode(githubUsername));
-            newUser.setRole("USER");
-            return userRepository.save(newUser);
-        });
+        User user = userRepository.findByEmail(email).orElseGet(() -> registerNewOauthUser(githubUsername, email));
 
         // Create JWT
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
         String accessToken = jwtUtils.generateAccessToken(userDetails);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
+
         response.addCookie(refreshTokenService.getRefreshCookie(refreshToken));
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -68,5 +65,15 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 }
                 """.formatted(accessToken, user.getId(), user.getUsername(), user.getEmail(), user.getRole()));
 
+    }
+
+    private @NotNull User registerNewOauthUser(String githubUsername, String email) {
+        User newUser = new User();
+        newUser.setUsername(githubUsername);
+        newUser.setEmail(email);
+        newUser.setPassword(passwordEncoder.encode(githubUsername));
+        newUser.setRole("USER");
+        newUser.setEmailVerified(true);
+        return userRepository.save(newUser);
     }
 }
