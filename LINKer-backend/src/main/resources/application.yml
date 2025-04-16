@@ -45,3 +45,5 @@ springdoc:
     path: /api/docs/json
   swagger-ui:
     path: /api/docs/swagger-ui
+app:
+  base-url: http://localhost:8080/

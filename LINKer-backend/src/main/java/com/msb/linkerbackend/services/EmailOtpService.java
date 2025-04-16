@@ -30,8 +30,7 @@ public class EmailOtpService {
         int code = random.nextInt(1000000);
 
         // 2. Save the OTP to the database
-        User user = userService.findByUsername(username).orElseThrow(() ->
-                new UsernameNotFoundException("User not found"));
+        User user = userService.findByUsername(username);
         EmailOtp emailOtp = new EmailOtp();
         emailOtp.setUsername(user.getUsername());
         emailOtp.setCode(String.format("%06d", code));
@@ -54,8 +53,7 @@ public class EmailOtpService {
         if (emailOtp.getExpiresAt().isBefore(Instant.now())) {
             throw new BadCredentialsException("OTP expired");
         } else {
-            User user = userService.findByUsername(username).orElseThrow(() ->
-                    new UsernameNotFoundException("User not found"));
+            User user = userService.findByUsername(username);
             userService.setEmailVerified(user);
             emailOtp.setUsed(true);
             emailOtpRepository.save(emailOtp);

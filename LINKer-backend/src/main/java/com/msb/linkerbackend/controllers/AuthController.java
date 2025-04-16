@@ -67,7 +67,7 @@ public class AuthController {
             return ResponseEntity.ok(res);
         } catch (UsernameNotFoundException | BadCredentialsException | IllegalArgumentException e) {
             log.error("User Login Failed: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(new ErrorResponse("Username not found", e));
+            return ResponseEntity.badRequest().body(new ErrorResponse("User Login Failed", e));
         } catch (Exception e) {
             log.error("An error({}) occurred while logging in user({}): {}", e.getClass().getSimpleName(),
                     loginRequest, e.getMessage());

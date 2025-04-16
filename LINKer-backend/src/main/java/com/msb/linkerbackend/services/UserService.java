@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,7 @@ public class UserService {
         newUser.setEmail(registerRequest.getEmail());
         newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         // TODO: Change this to a proper role system
-        newUser.setRole("USER");
+        newUser.setRole("ROLE_USER");
 
         // Save the new user to the database
         userRepository.save(newUser);
@@ -65,8 +66,9 @@ public class UserService {
         return Optional.ofNullable(jwtUtils.generateAccessToken(userDetails));
     }
 
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("User not found with username: " + username));
     }
 
     public void setEmailVerified(@NotNull User user) {

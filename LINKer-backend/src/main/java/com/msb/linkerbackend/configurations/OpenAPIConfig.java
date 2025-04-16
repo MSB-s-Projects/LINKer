@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,11 +20,16 @@ import java.util.List;
         scheme = "bearer"
 )
 public class OpenAPIConfig {
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     @Bean
     public OpenAPI defineOpenAPI() {
-        Server server = new Server();
-        server.setUrl("http://localhost:8080");
-        server.setDescription("Development server");
+        Server devServer = new Server();
+        devServer.setUrl(baseUrl);
+        devServer.setDescription("Development server");
+
+        Server prodServer = new Server();
 
         Contact contact = new Contact();
         contact.setName("Manobal Singh Bagady");
@@ -35,6 +41,6 @@ public class OpenAPIConfig {
                 .description("A URL shortener and it's analytics project made in React and Spring Boot.")
                 .contact(contact);
 
-        return new OpenAPI().info(info).servers(List.of(server));
+        return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
     }
 }

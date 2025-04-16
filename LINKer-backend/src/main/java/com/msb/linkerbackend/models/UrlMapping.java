@@ -2,12 +2,13 @@ package com.msb.linkerbackend.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
 @Data
+@Entity
 @Table(name = "url_mappings")
 public class UrlMapping {
     @Id
@@ -16,6 +17,8 @@ public class UrlMapping {
     private String originalUrl;
     private String shortUrl;
     private int clickCount = 0;
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
     @ManyToOne

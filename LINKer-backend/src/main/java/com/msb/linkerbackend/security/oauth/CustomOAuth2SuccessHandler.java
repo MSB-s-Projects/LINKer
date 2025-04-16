@@ -72,7 +72,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         newUser.setUsername(githubUsername);
         newUser.setEmail(email);
         newUser.setPassword(passwordEncoder.encode(githubUsername));
-        newUser.setRole("USER");
+        newUser.setRole("ROLE_USER");
         newUser.setEmailVerified(true);
         return userRepository.save(newUser);
     }

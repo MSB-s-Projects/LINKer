@@ -21,7 +21,7 @@ public class User {
     private String password;
     private String email;
     boolean isEmailVerified = false;
-    private String role = "USER";
+    private String role = "ROLE_USER";
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime created;
