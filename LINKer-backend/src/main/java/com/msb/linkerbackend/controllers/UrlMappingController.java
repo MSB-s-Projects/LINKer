@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Map;
@@ -48,15 +45,7 @@ public class UrlMappingController {
 
             UrlMapping urlMapping = urlMappingService.shortenUrl(originalUrl, user);
 
-            UrlMappingDTO res = UrlMappingDTO.builder()
-                    .shortUrl(baseUrl + urlMapping.getShortUrl())
-                    .originalUrl(urlMapping.getOriginalUrl())
-                    .username(urlMapping.getUser().getUsername())
-                    .clickCount(urlMapping.getClickCount())
-                    .createdAt(urlMapping.getCreatedDate().toString())
-                    .build();
-
-            return ResponseEntity.ok(res);
+            return ResponseEntity.ok(new UrlMappingDTO(urlMapping, baseUrl));
         } catch (BadRequestException | UsernameNotFoundException | IllegalArgumentException e) {
             log.error("Failed to shorten URL: {}", e.getMessage());
             return ResponseEntity.badRequest().body(new ErrorResponse("Failed to shorten URL", e));
@@ -66,6 +55,25 @@ public class UrlMappingController {
             return ResponseEntity.internalServerError()
                     .body(new ErrorResponse("An error occurred while shortening URL", e));
         }
+    }
 
+    @GetMapping("/allUrls")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"), summary = "Get all URLs for a user")
+    public ResponseEntity<Object> getAllUrls(Principal principal) {
+        try {
+            var user = userService.findByUsername(principal.getName());
+            var urlMappings = urlMappingService.getAllUrls(user).stream()
+                    .map(urlMapping -> new UrlMappingDTO(urlMapping, baseUrl))
+                    .toList();
+            return ResponseEntity.ok(urlMappings);
+        } catch (UsernameNotFoundException | IllegalArgumentException e) {
+            log.error("Failed to retrieve URLs: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(new ErrorResponse("Failed to retrieve URLs", e));
+        } catch (Exception e) {
+            log.error("An error({}) occurred while retrieving URLs: {}", e.getClass().getSimpleName(), e.getMessage());
+            return ResponseEntity.internalServerError()
+                    .body(new ErrorResponse("An error occurred while retrieving URLs", e));
+        }
     }
 }

@@ -1,12 +1,11 @@
 package com.msb.linkerbackend.dtos;
 
+import com.msb.linkerbackend.models.UrlMapping;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UrlMappingDTO {
@@ -15,4 +14,12 @@ public class UrlMappingDTO {
     private int clickCount;
     private String createdAt;
     private String username;
+
+    public UrlMappingDTO(@NotNull UrlMapping urlMapping, @NotNull String baseUrl) {
+        this.originalUrl = urlMapping.getOriginalUrl();
+        this.shortUrl = baseUrl + urlMapping.getShortUrl();
+        this.clickCount = urlMapping.getClickCount();
+        this.createdAt = urlMapping.getCreatedDate().toString();
+        this.username = urlMapping.getUser().getUsername();
+    }
 }
