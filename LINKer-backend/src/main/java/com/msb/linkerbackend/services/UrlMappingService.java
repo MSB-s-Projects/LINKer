@@ -6,6 +6,7 @@ import com.msb.linkerbackend.repositories.UrlMappingRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -23,6 +24,10 @@ public class UrlMappingService {
         urlMapping.setShortUrl(generateShortUrl());
         urlMapping.setUser(user);
         return urlMappingRepository.save(urlMapping);
+    }
+
+    public List<UrlMapping> getAllUrls(User user) {
+        return urlMappingRepository.findByUser(user);
     }
 
     private @NotNull String generateShortUrl() {
