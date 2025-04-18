@@ -33,12 +33,10 @@ public class AnalyticsService {
                 .collect(Collectors.groupingBy(clickEvent ->
                         clickEvent.getClickDate().toLocalDate(), Collectors.counting()))
                 .entrySet().stream()
-                .map(entry -> {
-                    AnalyticsDto analyticsDto = new AnalyticsDto();
-                    analyticsDto.setClickDate(entry.getKey().toString());
-                    analyticsDto.setCount(entry.getValue().intValue());
-                    return analyticsDto;
-                }).toList();
+                .map(entry ->
+                        new AnalyticsDto(entry.getKey().toString(),
+                                entry.getValue().intValue())
+                ).toList();
     }
 
     public List<AnalyticsDto> getUserAnalytics(String username, @NotNull LocalDate fromDate,
@@ -51,12 +49,10 @@ public class AnalyticsService {
                 .collect(Collectors.groupingBy(clickEvent ->
                         clickEvent.getClickDate().toLocalDate(), Collectors.counting()))
                 .entrySet().stream()
-                .map(entry -> {
-                    AnalyticsDto analyticsDto = new AnalyticsDto();
-                    analyticsDto.setClickDate(entry.getKey().toString());
-                    analyticsDto.setCount(entry.getValue().intValue());
-                    return analyticsDto;
-                }).toList();
+                .map(entry ->
+                        new AnalyticsDto(entry.getKey().toString(),
+                                entry.getValue().intValue())
+                ).toList();
 
     }
 
