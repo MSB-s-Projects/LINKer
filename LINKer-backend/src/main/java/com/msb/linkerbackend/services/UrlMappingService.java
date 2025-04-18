@@ -29,10 +29,6 @@ public class UrlMappingService {
         return urlMappingRepository.save(urlMapping);
     }
 
-    public List<UrlMapping> getAllUrls(User user) {
-        return urlMappingRepository.findByUser(user);
-    }
-
     private @NotNull String generateShortUrl() {
         StringBuilder shortUrl = new StringBuilder(8);
         String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -40,6 +36,10 @@ public class UrlMappingService {
             shortUrl.append(characters.charAt(random.nextInt(characters.length())));
         }
         return shortUrl.toString();
+    }
+
+    public List<UrlMapping> getAllUrls(User user) {
+        return urlMappingRepository.findByUser(user);
     }
 
     @Transactional
