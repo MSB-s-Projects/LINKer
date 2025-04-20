@@ -32,31 +32,31 @@ function About() {
 						<ul className='space-y-4'>
 							<li className='flex items-start space-x-3'>
 								<LinkLogo className='w-6 h-6 text-primary' />
-								<P>
+								<span>
 									<strong>Custom Short Links:</strong> Create personalized short links that are easy to remember and
 									share.
-								</P>
+								</span>
 							</li>
 							<li className='flex items-start space-x-3'>
 								<BarChart className='w-6 h-6 text-primary' />
-								<P>
+								<span>
 									<strong>Advanced Analytics:</strong> Gain insights into your audience with detailed analytics,
 									including click counts, geographic data, and device information.
-								</P>
+								</span>
 							</li>
 							<li className='flex items-start space-x-3'>
 								<Globe className='w-6 h-6 text-primary' />
-								<P>
+								<span>
 									<strong>Global Reach:</strong> Share your links with a global audience and track their performance
 									across different regions.
-								</P>
+								</span>
 							</li>
 							<li className='flex items-start space-x-3'>
 								<Users className='w-6 h-6 text-primary' />
-								<P>
+								<span>
 									<strong>Team Collaboration:</strong> Collaborate with your team to manage and analyze links
 									effectively.
-								</P>
+								</span>
 							</li>
 						</ul>
 					</div>
