@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { createFileRoute } from '@tanstack/react-router'
 import { Link } from 'lucide-react'
-import { Features } from './components/features.component'
-import { Hero } from './components/hero.component'
+import { Features } from './components/features.lazy'
+import { Hero } from './components/hero.lazy'
 
 export const Route = createFileRoute('/')({
 	component: Index,

@@ -8,20 +8,22 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute, lazyRouteComponent } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about/route'
 import { Route as IndexRouteImport } from './routes/index/route'
+import { Route as AuthSignupRouteImport } from './routes/auth/signup/route'
+import { Route as AuthLoginRouteImport } from './routes/auth/login/route'
 
 // Create Virtual Routes
 
-const IndexComponentsHeroComponentImport = createFileRoute(
+const IndexComponentsHeroLazyImport = createFileRoute(
   '/index/components/hero',
 )()
-const IndexComponentsFeaturesComponentImport = createFileRoute(
+const IndexComponentsFeaturesLazyImport = createFileRoute(
   '/index/components/features',
 )()
 
@@ -39,29 +41,34 @@ const IndexRouteRoute = IndexRouteImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexComponentsHeroComponentRoute =
-  IndexComponentsHeroComponentImport.update({
-    id: '/index/components/hero',
-    path: '/index/components/hero',
-    getParentRoute: () => rootRoute,
-  } as any).update({
-    component: lazyRouteComponent(
-      () => import('./routes/index/components/hero.component'),
-      'component',
-    ),
-  })
+const AuthSignupRouteRoute = AuthSignupRouteImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
+  getParentRoute: () => rootRoute,
+} as any)
 
-const IndexComponentsFeaturesComponentRoute =
-  IndexComponentsFeaturesComponentImport.update({
+const AuthLoginRouteRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const IndexComponentsHeroLazyRoute = IndexComponentsHeroLazyImport.update({
+  id: '/index/components/hero',
+  path: '/index/components/hero',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/index/components/hero.lazy').then((d) => d.Route),
+)
+
+const IndexComponentsFeaturesLazyRoute =
+  IndexComponentsFeaturesLazyImport.update({
     id: '/index/components/features',
     path: '/index/components/features',
     getParentRoute: () => rootRoute,
-  } as any).update({
-    component: lazyRouteComponent(
-      () => import('./routes/index/components/features.component'),
-      'component',
-    ),
-  })
+  } as any).lazy(() =>
+    import('./routes/index/components/features.lazy').then((d) => d.Route),
+  )
 
 // Populate the FileRoutesByPath interface
 
@@ -81,18 +88,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRoute
     }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/index/components/features': {
       id: '/index/components/features'
       path: '/index/components/features'
       fullPath: '/index/components/features'
-      preLoaderRoute: typeof IndexComponentsFeaturesComponentImport
+      preLoaderRoute: typeof IndexComponentsFeaturesLazyImport
       parentRoute: typeof rootRoute
     }
     '/index/components/hero': {
       id: '/index/components/hero'
       path: '/index/components/hero'
       fullPath: '/index/components/hero'
-      preLoaderRoute: typeof IndexComponentsHeroComponentImport
+      preLoaderRoute: typeof IndexComponentsHeroLazyImport
       parentRoute: typeof rootRoute
     }
   }
@@ -103,23 +124,29 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRouteRoute
   '/about': typeof AboutRouteRoute
-  '/index/components/features': typeof IndexComponentsFeaturesComponentRoute
-  '/index/components/hero': typeof IndexComponentsHeroComponentRoute
+  '/auth/login': typeof AuthLoginRouteRoute
+  '/auth/signup': typeof AuthSignupRouteRoute
+  '/index/components/features': typeof IndexComponentsFeaturesLazyRoute
+  '/index/components/hero': typeof IndexComponentsHeroLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRouteRoute
   '/about': typeof AboutRouteRoute
-  '/index/components/features': typeof IndexComponentsFeaturesComponentRoute
-  '/index/components/hero': typeof IndexComponentsHeroComponentRoute
+  '/auth/login': typeof AuthLoginRouteRoute
+  '/auth/signup': typeof AuthSignupRouteRoute
+  '/index/components/features': typeof IndexComponentsFeaturesLazyRoute
+  '/index/components/hero': typeof IndexComponentsHeroLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRouteRoute
   '/about': typeof AboutRouteRoute
-  '/index/components/features': typeof IndexComponentsFeaturesComponentRoute
-  '/index/components/hero': typeof IndexComponentsHeroComponentRoute
+  '/auth/login': typeof AuthLoginRouteRoute
+  '/auth/signup': typeof AuthSignupRouteRoute
+  '/index/components/features': typeof IndexComponentsFeaturesLazyRoute
+  '/index/components/hero': typeof IndexComponentsHeroLazyRoute
 }
 
 export interface FileRouteTypes {
@@ -127,14 +154,24 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/auth/login'
+    | '/auth/signup'
     | '/index/components/features'
     | '/index/components/hero'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/index/components/features' | '/index/components/hero'
+  to:
+    | '/'
+    | '/about'
+    | '/auth/login'
+    | '/auth/signup'
+    | '/index/components/features'
+    | '/index/components/hero'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/auth/login'
+    | '/auth/signup'
     | '/index/components/features'
     | '/index/components/hero'
   fileRoutesById: FileRoutesById
@@ -143,15 +180,19 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRouteRoute: typeof IndexRouteRoute
   AboutRouteRoute: typeof AboutRouteRoute
-  IndexComponentsFeaturesComponentRoute: typeof IndexComponentsFeaturesComponentRoute
-  IndexComponentsHeroComponentRoute: typeof IndexComponentsHeroComponentRoute
+  AuthLoginRouteRoute: typeof AuthLoginRouteRoute
+  AuthSignupRouteRoute: typeof AuthSignupRouteRoute
+  IndexComponentsFeaturesLazyRoute: typeof IndexComponentsFeaturesLazyRoute
+  IndexComponentsHeroLazyRoute: typeof IndexComponentsHeroLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRouteRoute: IndexRouteRoute,
   AboutRouteRoute: AboutRouteRoute,
-  IndexComponentsFeaturesComponentRoute: IndexComponentsFeaturesComponentRoute,
-  IndexComponentsHeroComponentRoute: IndexComponentsHeroComponentRoute,
+  AuthLoginRouteRoute: AuthLoginRouteRoute,
+  AuthSignupRouteRoute: AuthSignupRouteRoute,
+  IndexComponentsFeaturesLazyRoute: IndexComponentsFeaturesLazyRoute,
+  IndexComponentsHeroLazyRoute: IndexComponentsHeroLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -166,6 +207,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/about",
+        "/auth/login",
+        "/auth/signup",
         "/index/components/features",
         "/index/components/hero"
       ]
@@ -176,11 +219,17 @@ export const routeTree = rootRoute
     "/about": {
       "filePath": "about/route.tsx"
     },
+    "/auth/login": {
+      "filePath": "auth/login/route.tsx"
+    },
+    "/auth/signup": {
+      "filePath": "auth/signup/route.tsx"
+    },
     "/index/components/features": {
-      "filePath": "index/components/features.component.tsx"
+      "filePath": "index/components/features.lazy.tsx"
     },
     "/index/components/hero": {
-      "filePath": "index/components/hero.component.tsx"
+      "filePath": "index/components/hero.lazy.tsx"
     }
   }
 }
