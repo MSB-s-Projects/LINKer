@@ -18,7 +18,7 @@ export default function Navbar() {
 
 				{/* Desktop Menue */}
 				<div className='flex items-center gap-4'>
-					<div className='hidden md:block'>
+					<div className='hidden lg:block'>
 						{NavbarConfig.routes.map((item) => (
 							<Link key={item.href} to={item.href}>
 								{item.title}
@@ -27,7 +27,7 @@ export default function Navbar() {
 					</div>
 				</div>
 
-				<div className='hidden md:block'>
+				<div className='hidden lg:block'>
 					<div className='flex items-center gap-2'>
 						<Button>Login</Button>
 						<ModeToggle />
