@@ -11,7 +11,7 @@ export const Route = createFileRoute('/about')({
 function About() {
 	return (
 		<div className='flex flex-col items-center justify-center min-h-screen p-6 bg-background text-foreground'>
-			<Card className='max-w-4xl shadow-md rounded-lg'>
+			<Card className='max-w-6xl shadow-md rounded-lg'>
 				<CardHeader>
 					<div className='flex items-center space-x-4'>
 						<Info className='w-8 h-8 text-primary' />
@@ -95,11 +95,9 @@ function About() {
 							Join thousands of users who trust LINKer to simplify their link-sharing experience. Whether you're an
 							individual or a business, LINKer has the tools you need to succeed.
 						</P>
-						<Button>
-							<Link to='/' className='bg-primary text-primary-foreground'>
-								Get Started
-							</Link>
-						</Button>
+						<Link to='/'>
+							<Button className='bg-primary text-primary-foreground'>Get Started</Button>
+						</Link>
 					</div>
 				</CardContent>
 			</Card>

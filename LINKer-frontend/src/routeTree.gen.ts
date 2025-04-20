@@ -8,11 +8,22 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute, lazyRouteComponent } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as AboutRouteImport } from './routes/about/route'
 import { Route as IndexRouteImport } from './routes/index/route'
+
+// Create Virtual Routes
+
+const IndexComponentsHeroComponentImport = createFileRoute(
+  '/index/components/hero',
+)()
+const IndexComponentsFeaturesComponentImport = createFileRoute(
+  '/index/components/features',
+)()
 
 // Create/Update Routes
 
@@ -27,6 +38,30 @@ const IndexRouteRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const IndexComponentsHeroComponentRoute =
+  IndexComponentsHeroComponentImport.update({
+    id: '/index/components/hero',
+    path: '/index/components/hero',
+    getParentRoute: () => rootRoute,
+  } as any).update({
+    component: lazyRouteComponent(
+      () => import('./routes/index/components/hero.component'),
+      'component',
+    ),
+  })
+
+const IndexComponentsFeaturesComponentRoute =
+  IndexComponentsFeaturesComponentImport.update({
+    id: '/index/components/features',
+    path: '/index/components/features',
+    getParentRoute: () => rootRoute,
+  } as any).update({
+    component: lazyRouteComponent(
+      () => import('./routes/index/components/features.component'),
+      'component',
+    ),
+  })
 
 // Populate the FileRoutesByPath interface
 
@@ -46,6 +81,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRoute
     }
+    '/index/components/features': {
+      id: '/index/components/features'
+      path: '/index/components/features'
+      fullPath: '/index/components/features'
+      preLoaderRoute: typeof IndexComponentsFeaturesComponentImport
+      parentRoute: typeof rootRoute
+    }
+    '/index/components/hero': {
+      id: '/index/components/hero'
+      path: '/index/components/hero'
+      fullPath: '/index/components/hero'
+      preLoaderRoute: typeof IndexComponentsHeroComponentImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -54,36 +103,55 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRouteRoute
   '/about': typeof AboutRouteRoute
+  '/index/components/features': typeof IndexComponentsFeaturesComponentRoute
+  '/index/components/hero': typeof IndexComponentsHeroComponentRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRouteRoute
   '/about': typeof AboutRouteRoute
+  '/index/components/features': typeof IndexComponentsFeaturesComponentRoute
+  '/index/components/hero': typeof IndexComponentsHeroComponentRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRouteRoute
   '/about': typeof AboutRouteRoute
+  '/index/components/features': typeof IndexComponentsFeaturesComponentRoute
+  '/index/components/hero': typeof IndexComponentsHeroComponentRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/index/components/features'
+    | '/index/components/hero'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to: '/' | '/about' | '/index/components/features' | '/index/components/hero'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/index/components/features'
+    | '/index/components/hero'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRouteRoute: typeof IndexRouteRoute
   AboutRouteRoute: typeof AboutRouteRoute
+  IndexComponentsFeaturesComponentRoute: typeof IndexComponentsFeaturesComponentRoute
+  IndexComponentsHeroComponentRoute: typeof IndexComponentsHeroComponentRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRouteRoute: IndexRouteRoute,
   AboutRouteRoute: AboutRouteRoute,
+  IndexComponentsFeaturesComponentRoute: IndexComponentsFeaturesComponentRoute,
+  IndexComponentsHeroComponentRoute: IndexComponentsHeroComponentRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +165,9 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/about"
+        "/about",
+        "/index/components/features",
+        "/index/components/hero"
       ]
     },
     "/": {
@@ -105,6 +175,12 @@ export const routeTree = rootRoute
     },
     "/about": {
       "filePath": "about/route.tsx"
+    },
+    "/index/components/features": {
+      "filePath": "index/components/features.component.tsx"
+    },
+    "/index/components/hero": {
+      "filePath": "index/components/hero.component.tsx"
     }
   }
 }

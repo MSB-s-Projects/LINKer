@@ -11,9 +11,8 @@ export default function Navbar() {
 		<nav className='fixed left-1/2 top-0 z-50 mt-7 flex w-11/12 max-w-7xl -translate-x-1/2 flex-col items-center rounded-full bg-background/20 p-3 backdrop-blur-lg md:rounded-full border-2'>
 			<div className='flex w-full items-center justify-between'>
 				<Link to={NavbarConfig.brand.href}>
-					<Button variant='outline' className='flex items-center gap-2 rounded-2xl'>
-						<NavbarConfig.brand.logo className='size-4' />
-						<div>{NavbarConfig.brand.name}</div>
+					<Button variant='outline' className='flex items-center gap-2 rounded-2xl py-5'>
+						<img src='/logo.png' alt='' className='w-22' />
 					</Button>
 				</Link>
 

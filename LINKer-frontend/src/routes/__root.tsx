@@ -1,3 +1,4 @@
+import { Footer } from '@/components/ui/footer/footer'
 import Navbar from '@/components/ui/navbar/navbar'
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
@@ -12,9 +13,10 @@ function RootComponent() {
 			<section id='navbar'>
 				<Navbar />
 			</section>
-			<div className='mt-24'>
+			<main className='mt-24'>
 				<Outlet />
-			</div>
+			</main>
+			<Footer />
 			<TanStackRouterDevtools />
 		</>
 	)
